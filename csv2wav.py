@@ -4,6 +4,7 @@ import csv
 import numpy as np
 import wave
 import sys
+from scipy.signal import resample
 
 def csv_to_wav(csv_filename, wav_filename, sample_rate=44100):
     # Read the CSV file and extract sample rate from header
@@ -27,8 +28,16 @@ def csv_to_wav(csv_filename, wav_filename, sample_rate=44100):
     if max_val > 0:
         audio_data = audio_data / max_val
 
+    # Downsample to 48 kHz
+    target_sample_rate = 48000
+    num_samples = int(len(audio_data) * target_sample_rate / sample_rate)
+    audio_data = resample(audio_data, num_samples)
+
     # Convert to 16-bit PCM
     audio_data = (audio_data * 32767).astype(np.int16)
+
+    # Update sample rate to 48 kHz
+    sample_rate = target_sample_rate
 
     # Write to WAV file
     with wave.open(wav_filename, 'w') as wavfile:
