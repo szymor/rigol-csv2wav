@@ -4,7 +4,7 @@ import csv
 import numpy as np
 import wave
 import sys
-from scipy.signal import resample
+from scipy.signal import resample, butter, filtfilt
 
 def csv_to_wav(csv_filename, wav_filename):
     # Read the CSV file and extract sample rate from header
@@ -27,6 +27,13 @@ def csv_to_wav(csv_filename, wav_filename):
     max_val = np.max(np.abs(audio_data))
     if max_val > 0:
         audio_data = audio_data / max_val
+
+    # Apply low-pass filter with cutoff frequency of 22 kHz
+    cutoff_freq = 22000  # 22 kHz
+    nyquist_rate = sample_rate / 2
+    normal_cutoff = cutoff_freq / nyquist_rate
+    b, a = butter(5, normal_cutoff, btype='low', analog=False)
+    audio_data = filtfilt(b, a, audio_data)
 
     # Downsample to 48 kHz
     target_sample_rate = 48000
