@@ -6,14 +6,14 @@ import wave
 import sys
 from scipy.signal import resample
 
-def csv_to_wav(csv_filename, wav_filename, sample_rate=44100):
+def csv_to_wav(csv_filename, wav_filename):
     # Read the CSV file and extract sample rate from header
     with open(csv_filename, 'r') as csvfile:
         reader = csv.reader(csvfile)
         # Read the header
         header = next(reader)
         # Extract tInc value from the header
-        tInc_str = header[1].split('=')[1].strip().split('s')[0]
+        tInc_str = header[2].split('=')[1].strip().split('s')[0]
         tInc = float(tInc_str)
         # Calculate sample rate
         sample_rate = int(1 / tInc)
