@@ -6,11 +6,16 @@ import wave
 import sys
 
 def csv_to_wav(csv_filename, wav_filename, sample_rate=44100):
-    # Read the CSV file
+    # Read the CSV file and extract sample rate from header
     with open(csv_filename, 'r') as csvfile:
         reader = csv.reader(csvfile)
-        # Skip the header
-        next(reader)
+        # Read the header
+        header = next(reader)
+        # Extract tInc value from the header
+        tInc_str = header[1].split('=')[1].strip().split('s')[0]
+        tInc = float(tInc_str)
+        # Calculate sample rate
+        sample_rate = int(1 / tInc)
         # Read the data
         data = [float(row[0]) for row in reader if row[0]]
 
